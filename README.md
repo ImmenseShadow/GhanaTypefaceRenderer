@@ -25,6 +25,9 @@ python main.py --font fonts/YourFont.ttf --char A
 
 Choose another character or output size:
 
+usage: main.py [-h] [--font FONT] [--char CHAR] [--size SIZE] [--steps STEPS] [--padding PADDING] [--output OUTPUT]
+
+Example:
 ```bash
 python main.py --font fonts/YourFont.ttf --char B --size 500 --output output/B.png
 ```
