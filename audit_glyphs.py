@@ -12,7 +12,7 @@ characters = (
         + list("abcdefghijklmnopqrstuvwxyz")
         + list("0123456789")
         + list("ƐɛƆɔ")
-        + list(".,:;!?-()[]")
+        + list(".,:;!?()[]")
         + list("+-×÷=")
         + ["'", '"', "/", "\\"]
         + list("@#$%^&*")
