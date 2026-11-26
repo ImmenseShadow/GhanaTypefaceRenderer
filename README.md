@@ -1,55 +1,32 @@
-# Ghana Typeface Renderer
+# ANANSE SVG Glyph Workspace
 
-A learning-oriented glyph renderer using Python, FontTools, NumPy, and Pillow.
+This starter package exports the 93 visible glyphs in the current ANANSE font as individual SVG files and creates a contact sheet plus CSV/JSON manifests.
 
-## Setup
+## Important
+This is an **export and review workspace**, not a completed Adinkra redesign. It exports the outlines currently present in your TTF. It does not invent symbol geometry or claim that the symbols have been structurally integrated. The approved master concept artwork must be used to trace and integrate each Adinkra symbol before a glyph is marked final.
 
-From the project root, install dependencies:
-
-```bash
-python -m pip install -r requirements.txt
+## Install
+```powershell
+py -m pip install -r requirements.txt
 ```
 
-Copy a `.ttf` or `.otf` font into the `fonts` directory. For example:
-
-```text
-fonts/
-    YourFont.ttf
+## Run
+From the GhanaTypefaceRenderer project folder:
+```powershell
+py generate_glyphs.py --font fonts/ANANSE-Regular.ttf --output ANANSE_SVG_Output
 ```
 
-Run the renderer:
+## Output
+- `glyphs/U+XXXX.svg`: individual SVGs
+- `ANANSE_93_Glyph_Contact_Sheet.png`
+- `glyph_manifest.csv`
+- `glyph_manifest.json`
 
-```bash
-python main.py --font fonts/YourFont.ttf --char A
-```
+## Inventory
+93 visible characters: A-Z, a-z, 0-9, Ɛ ɛ Ɔ ɔ, `.,:;!?-()[]`, `+ − × ÷ =`, `' "`, `/ \\`, and `@ # $ % ^ & *`. Space is a spacing character and is not included among the 93 visible outlines.
 
-Choose another character or output size:
+## Mapping status
+Confirmed mappings are listed in `adinkra_geometry.py`. D/E/F are proposed and require your approval. Other mappings remain unassigned until established.
 
-usage: main.py [-h] [--font FONT] [--char CHAR] [--size SIZE] [--steps STEPS] [--padding PADDING] [--output OUTPUT]
-
-Example:
-```bash
-python main.py --font fonts/YourFont.ttf --char B --size 500 --output output/B.png
-```
-
-Run the Bézier tests:
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-## Current implementation
-
-- TTF/OTF loading and character mapping through FontTools.
-- Quadratic and cubic Bézier evaluation.
-- Curve flattening through sampled points.
-- Scan-line rasterization.
-- Non-zero winding fill rule.
-- Grayscale PNG output.
-
-## Important limitations
-
-- Curve flattening currently uses a fixed number of samples per curve segment.
-- Rasterization currently uses binary pixel coverage, not anti-aliasing.
-- This is a first working baseline. It should be tested against the group's actual font and integrated with Member 8's supersampling stage.
-- The current renderer renders one glyph at a time. Text layout, kerning, shaping, and line wrapping are outside this initial implementation.
+## Next step
+Trace symbol paths from the approved ANANSE master concept artwork, then integrate those paths into the actual letter outlines. Do not simply paste symbols inside ordinary letters.
