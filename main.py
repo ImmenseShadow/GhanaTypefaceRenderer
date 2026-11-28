@@ -15,8 +15,8 @@ The functions used here are implemented in the renderer package.
 """
 
 import argparse
-from pathlib import Path
 import math
+from pathlib import Path
 
 from PIL import Image
 
@@ -57,45 +57,58 @@ def convert_to_pixel_coordinates(contours, units_per_em, pixel_size, padding):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Render one character from a TTF/OTF font.")
-    parser.add_argument("--font", default="fonts/YourFont.ttf", help="Path to a .ttf or .otf font")
+    parser = argparse.ArgumentParser(
+        description="Render one character from the ANANSE TTF/OTF font."
+    )
+    parser.add_argument(
+        "--font",
+        default="fonts/Ananse-Regular-4.ttf",
+        help="Path to a .ttf or .otf font",
+    )
     parser.add_argument("--char", default="A", help="Single character to render")
-    parser.add_argument("--size", type=int, default=400, help="Approximate glyph size in pixels")
-    parser.add_argument("--steps", type=int, default=16, help="Samples per Bézier curve")
-    parser.add_argument("--padding", type=int, default=20, help="Image padding in pixels")
-    parser.add_argument("--output", default="output/glyph.png", help="Output PNG path")
+    parser.add_argument("--size", type=int, default=400,
+                        help="Approximate em-square scale in pixels")
+    parser.add_argument("--steps", type=int, default=16,
+                        help="Samples per Bézier curve")
+    parser.add_argument("--padding", type=int, default=20,
+                        help="Image padding in pixels")
+    parser.add_argument("--output", default="output/glyph.png",
+                        help="Output PNG path")
     args = parser.parse_args()
 
     if len(args.char) != 1:
         parser.error("--char must contain exactly one character")
 
-    font_path = Path(args.font)
-    if not font_path.exists():
-        raise FileNotFoundError(
-            f"Font not found: {font_path}\n"
-            "Copy a .ttf or .otf font into the fonts folder, then pass its path with --font."
-        )
-
     if args.size <= 0 or args.steps < 1 or args.padding < 0:
         parser.error("--size and --steps must be positive; --padding cannot be negative")
+
+    font_path = Path(args.font)
+    if not font_path.is_file():
+        raise FileNotFoundError(
+            f"Font not found: {font_path}\n"
+            "Check the --font path. The repository's ANANSE font is "
+            "'fonts/Ananse-Regular-4.ttf'."
+        )
 
     with FontLoader(font_path) as font:
         glyph_name, glyph, glyph_set = font.get_glyph(args.char)
         contours = flatten_glyph(glyph_name, glyph_set, steps=args.steps)
 
         if not contours or not any(len(contour) >= 3 for contour in contours):
-            print(f"'{args.char}' ({glyph_name}) has no filled outline to rasterize.")
+            print(
+                f"{args.char!r} maps to {glyph_name!r}, "
+                "but has no filled outline (this is normal for space)."
+            )
             return
 
         pixel_contours, width, height = convert_to_pixel_coordinates(
             contours, font.units_per_em, args.size, args.padding
         )
-
         bitmap = rasterize_contours(pixel_contours, width, height)
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(bitmap).save(output_path)
+    Image.fromarray(bitmap, mode="L").save(output_path)
 
     print(f"Rendered {args.char!r} using glyph {glyph_name!r}")
     print(f"Image dimensions: {width} x {height}")
